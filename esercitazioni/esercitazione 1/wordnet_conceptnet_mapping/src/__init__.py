@@ -1,0 +1,2 @@
+from src.conceptnet_utils import get_conceptnet_entries
+from src.wordnet_utils import wordnet_to_conceptnet
