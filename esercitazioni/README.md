@@ -1,8 +1,10 @@
-# Istruzioni esecuzione programmi 
+# Esercitazioni di Base
+
+## Istruzioni per l'esecuzione dei programmi 
 
 Per le esercitazioni:
 
-- 1) Creare un ambiente virtuale e attivarlo
+- Creare un ambiente virtuale e attivarlo
 
 ```bash
 
@@ -10,14 +12,20 @@ python -m venv venv
 
 source venv/bin/activate
 
-```bash
+```
 
-- 2) Installare i requirements
+- Installare i requirements
 
 ```bash
 
 pip install -r requirements.txt
 
-```bash
+```
 
+## Esercitazioni 
 
+### Esercitazione 1 
+
+### Esercitazione 2 
+
+### Esercitazione 3
