@@ -35,4 +35,21 @@ Nella nuova risorsa che si va a creare ogni parola presente in WordNet sarà ass
 
 ### Esercitazione 2 
 
+% TODO: FARE INTRODUZIONE
+
+Risultati ottenuti (medie):
+
+- Pantalone:
+    + SimLex: 0.5519
+    + SimSem: 0.4232
+- Microscopio:
+    + SimLex: 0.5558
+    + SimSem: 0.4217
+- Pericolo:
+    + SimLex: 0.5536
+    + SimSem: 0.3664
+- Euristica:
+    + SimLex: 0.4698
+    + SimSem: 0.2977
+
 ### Esercitazione 3
