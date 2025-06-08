@@ -40,16 +40,16 @@ Nella nuova risorsa che si va a creare ogni parola presente in WordNet sarà ass
 Risultati ottenuti (medie):
 
 - Pantalone:
-    + SimLex: 0.5519
-    + SimSem: 0.4232
+    + SimLex: 0.6093
+    + SimSem: 0.4225
 - Microscopio:
-    + SimLex: 0.5558
-    + SimSem: 0.4217
+    + SimLex: 0.4734
+    + SimSem: 0.3957
 - Pericolo:
-    + SimLex: 0.5536
-    + SimSem: 0.3664
+    + SimLex: 0.4783
+    + SimSem: 0.3700
 - Euristica:
-    + SimLex: 0.4698
-    + SimSem: 0.2977
+    + SimLex: 0.2276
+    + SimSem: 0.2874
 
 ### Esercitazione 3

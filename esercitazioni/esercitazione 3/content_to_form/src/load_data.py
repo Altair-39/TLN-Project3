@@ -1,31 +1,24 @@
 
-from deep_translator import GoogleTranslator
 import pandas as pd
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 
+# Download required resources if not already present
 nltk.download('punkt')
-nltk.download('punkt_tab')
+nltk.download('punkt-tab')
 nltk.download('stopwords')
 nltk.download('wordnet')
 
 
-def translate_text(text, target='en'):
-    try:
-        return GoogleTranslator(source='auto', target=target).translate(text)
-    except Exception as e:
-        print(f"Translation error: {e}")
-        return text
-
-
 def preprocess_text(text):
-    # Initialize the Lemmatizer and English stopwords
+    # Initialize the Lemmatizer and stopwords
     lemmatizer = WordNetLemmatizer()
-    stop_words = set(stopwords.words('english'))  # Use English stopwords now
+    # You can change the language if needed
+    stop_words = set(stopwords.words('italian'))
 
-    tokens = word_tokenize(text.lower())
+    tokens = word_tokenize(text.lower())  # Convert to lowercase for case insensitivity
     processed_tokens = [
         lemmatizer.lemmatize(word) for word in tokens if word not in stop_words and word.isalpha()
     ]
@@ -41,9 +34,7 @@ def extract_definitions_to_word(csv_path: str):
         term = row['Termine']
         definitions = row[2:].dropna().tolist()
 
-        translated_definitions = [translate_text(defn) for defn in definitions]
-        processed_definitions = [preprocess_text(
-            defn) for defn in translated_definitions]
+        processed_definitions = [preprocess_text(defn) for defn in definitions]
         definitions_dict[term] = processed_definitions
 
     return definitions_dict

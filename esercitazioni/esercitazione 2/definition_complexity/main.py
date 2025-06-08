@@ -51,8 +51,8 @@ def main():
 
     table.add_section()  # visually separates the mean row
     table.add_row(
-        "[bold]Mean[/bold]", "", 
-        f"[bold]{avg_sem:.4f}[/bold]", 
+        "[bold]Mean[/bold]", "",
+        f"[bold]{avg_sem:.4f}[/bold]",
         f"[bold]{avg_syn:.4f}[/bold]"
     )
 
@@ -61,4 +61,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
