@@ -13,6 +13,13 @@ from src.topic import topic_zero_shot, topic_one_shot
 from src.pipeline import load_pipeline
 
 
+def setup_logging() -> None:
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s'
+    )
+
+
 def check_dotenv(dotenv_path: Optional[str]) -> None:
     if dotenv_path:
         load_dotenv(dotenv_path)
@@ -56,12 +63,7 @@ def run_guess_task(pipe: Pipeline, definitions_csv: str) -> None:
 
 
 def main():
-    logging.basicConfig(
-        level=logging.INFO,
-        format=(
-            '%(asctime)s - %(levelname)s - %(message)s'
-        )
-    )
+    setup_logging()
 
     try:
         dotenv_path = find_dotenv()

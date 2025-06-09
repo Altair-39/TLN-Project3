@@ -1,27 +1,25 @@
-import questionary
 import logging
+import questionary
 from sentence_transformers import SentenceTransformer
 from bertopic import BERTopic
-from src.pipeline import dataset
+from typing import Tuple, List
+from src.pipeline import dataset, generate_embeddings, create_topic_model
 
 
-def main():
+def setup_logging() -> None:
     logging.basicConfig(
         level=logging.INFO,
-        format=(
-            '%(asctime)s - %(levelname)s - %(message)s'
-        )
+        format='%(asctime)s - %(levelname)s - %(message)s'
     )
-    text, title = dataset()
-    model = SentenceTransformer("thenlper/gte-small")
-    embeddings = model.encode(title[:1000], show_progress_bar=True)
 
-    topic_model = BERTopic(embedding_model=model, min_topic_size=10, verbose=True)
-    topics, probs = topic_model.fit_transform(title[:1000], embeddings)
 
+def load_data() -> Tuple[List[str], List[str]]:
+    return dataset()
+
+
+def save_topic_info(topic_model: BERTopic) -> None:
     topic_info = topic_model.get_topic_info()
-
-    file_format = questionary.select(
+    file_format: str = questionary.select(
         "Choose a format to save topic info:",
         choices=["CSV", "JSON", "None"]
     ).ask()
@@ -33,10 +31,14 @@ def main():
         topic_info.to_json("topic_info.json", orient="records", lines=True)
         logging.info("Saved as topic_info.json")
     else:
-        logging.warning("❎ Skipped saving topic info")
+        logging.warning("Skipped saving topic info")
 
-    save_visuals = questionary.confirm("Do you want to save the visualizations as HTML?").ask()
-    show_visuals = questionary.confirm("Do you want to display the visualizations now?").ask()
+
+def handle_visualizations(topic_model: BERTopic) -> None:
+    save_visuals: bool = questionary.confirm(
+        "Do you want to save the visualizations as HTML?").ask()
+    show_visuals: bool = questionary.confirm(
+        "Do you want to display the visualizations now?").ask()
 
     fig_overview = topic_model.visualize_topics()
     fig_barchart = topic_model.visualize_barchart(top_n_topics=10)
@@ -53,6 +55,20 @@ def main():
         fig_barchart.show()
     else:
         logging.warning("Skipped displaying visualizations.")
+
+
+def main() -> None:
+    setup_logging()
+
+    text, title = load_data()
+    model: SentenceTransformer = SentenceTransformer("thenlper/gte-small")
+    titles_subset: List[str] = title[:1000]
+
+    embeddings = generate_embeddings(model, titles_subset)
+    topic_model, topics, probs = create_topic_model(model, titles_subset, embeddings)
+
+    save_topic_info(topic_model)
+    handle_visualizations(topic_model)
 
 
 if __name__ == "__main__":
