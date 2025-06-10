@@ -4,8 +4,6 @@ from nltk.corpus import wordnet as wn
 from src.conceptnet_utils import get_conceptnet_entries
 import logging
 
-# Define type aliases for better code documentation
-
 
 class SynsetData(TypedDict):
     name: str
