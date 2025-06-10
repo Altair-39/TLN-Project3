@@ -33,13 +33,14 @@ def translate_to_english(text: str) -> str:
 
 def main() -> None:
     setup_logging()
-    dotenv_path = find_dotenv()
-    check_dotenv(dotenv_path)
-
-    definitions_csv = os.getenv("DEFINITIONS_CSV", "rsrc/definizioni.csv")
-    definitions_dict = extract_definitions_to_word(definitions_csv)
 
     try:
+        dotenv_path = find_dotenv()
+        check_dotenv(dotenv_path)
+
+        definitions_csv = os.getenv("DEFINITIONS_CSV", "rsrc/definizioni.csv")
+        definitions_dict = extract_definitions_to_word(definitions_csv)
+
         for term, definitions in definitions_dict.items():
             term_en = translate_to_english(term)
             term_synsets = en_wordnet.synsets(term_en, pos='n')
