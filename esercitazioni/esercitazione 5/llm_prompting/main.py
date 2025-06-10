@@ -62,7 +62,7 @@ def run_guess_task(pipe: Pipeline, definitions_csv: str) -> None:
             guess_terms_from_definitions_one_shot(definitions_csv, pipe)
 
 
-def main():
+def main() -> None:
     setup_logging()
 
     try:
@@ -84,7 +84,7 @@ def main():
             run_guess_task(pipe, definitions_csv)
 
     except KeyboardInterrupt:
-        print("\nExiting!")
+        logging.info("Exiting!")
 
 
 if __name__ == "__main__":
