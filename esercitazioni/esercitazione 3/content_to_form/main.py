@@ -1,6 +1,9 @@
+import os
 import logging
 from nltk.corpus import wordnet as en_wordnet
 from deep_translator import GoogleTranslator
+from typing import Optional
+from dotenv import load_dotenv, find_dotenv
 from src.load_data import extract_definitions_to_word
 from src.guessing import guess_synset
 
@@ -10,6 +13,14 @@ def setup_logging() -> None:
         level=logging.INFO,
         format='%(asctime)s - %(levelname)s - %(message)s'
     )
+
+
+def check_dotenv(dotenv_path: Optional[str]) -> None:
+    if dotenv_path:
+        load_dotenv(dotenv_path)
+        logging.info(f"Loaded environment variables from: {dotenv_path}")
+    else:
+        logging.error("No .env file found.")
 
 
 def translate_to_english(text: str) -> str:
@@ -22,8 +33,11 @@ def translate_to_english(text: str) -> str:
 
 def main() -> None:
     setup_logging()
-    csv_path = "rsrc/definizioni.csv"
-    definitions_dict = extract_definitions_to_word(csv_path)
+    dotenv_path = find_dotenv()
+    check_dotenv(dotenv_path)
+
+    definitions_csv = os.getenv("DEFINITIONS_CSV", "rsrc/definizioni.csv")
+    definitions_dict = extract_definitions_to_word(definitions_csv)
 
     try:
         for term, definitions in definitions_dict.items():
