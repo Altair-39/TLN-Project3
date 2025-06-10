@@ -28,22 +28,30 @@ def get_sense(
         return None
 
 
-def find_synset_language_sets(
-    synsets: List[Dict[str, Any]]
-) -> Tuple[int, int, Set[str]]:
-    en_synsets = set()
-    it_synsets = set()
+def find_synset_language_dict(
+    synsets: List[Dict[str, Any]],
+    langs: List[str]
+) -> Tuple[Dict[str, Set[str]], Set[str]]:
+    """
+    For a list of synsets, returns:
+    - A dict mapping each language to its set of synset IDs
+    - The set of synsets common to all languages
+    """
+    lang_synsets: Dict[str, Set[str]] = {lang.upper(): set() for lang in langs}
 
     for synset in synsets:
         props = synset.get('properties', {})
         synset_id = props.get('synsetID', {}).get('id')
-        lang = props.get('language')
+        lang = props.get('language', '').upper()
 
-        if synset_id and lang:
-            if lang.upper() == 'EN':
-                en_synsets.add(synset_id)
-            elif lang.upper() == 'IT':
-                it_synsets.add(synset_id)
+        if synset_id and lang in lang_synsets:
+            lang_synsets[lang].add(synset_id)
 
-    common = en_synsets.intersection(it_synsets)
-    return len(en_synsets), len(it_synsets), common
+    # Compute intersection of synsets across all languages (only if all have synsets)
+    synset_sets = [s for s in lang_synsets.values() if s]
+    if synset_sets:
+        common_synsets = set.intersection(*synset_sets)
+    else:
+        common_synsets = set()
+
+    return lang_synsets, common_synsets
