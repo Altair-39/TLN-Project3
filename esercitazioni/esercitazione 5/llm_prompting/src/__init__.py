@@ -1,3 +1,3 @@
-from src.guess import guess_terms_from_definitions_zero_shot, guess_terms_from_definitions_one_shot, guess_terms_from_definitions_one_shot_with_clues
-from src.topic import topic_zero_shot, topic_one_shot
+from src.guess import guess_terms_from_definitions, zero_shot_prompt, one_shot_prompt, one_shot_with_clues_prompt
+from src.topic import label_topics, zero_shot_prompt_topic, one_shot_prompt_topic
 from src.pipeline import load_pipeline

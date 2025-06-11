@@ -1,9 +1,11 @@
 import logging
+from typing import List, Tuple
+
 import questionary
-from sentence_transformers import SentenceTransformer
 from bertopic import BERTopic
-from typing import Tuple, List
-from src.pipeline import dataset, generate_embeddings, create_topic_model
+from sentence_transformers import SentenceTransformer
+
+from src.pipeline import create_topic_model, dataset, generate_embeddings
 
 
 def setup_logging() -> None:
@@ -59,16 +61,20 @@ def handle_visualizations(topic_model: BERTopic) -> None:
 
 def main() -> None:
     setup_logging()
+    try:
+        text, title = load_data()
+        model: SentenceTransformer = SentenceTransformer("thenlper/gte-small")
+        titles_subset: List[str] = title[:1000]
 
-    text, title = load_data()
-    model: SentenceTransformer = SentenceTransformer("thenlper/gte-small")
-    titles_subset: List[str] = title[:1000]
+        embeddings = generate_embeddings(model, titles_subset)
+        topic_model, topics, probs = create_topic_model(
+            model, titles_subset, embeddings)
 
-    embeddings = generate_embeddings(model, titles_subset)
-    topic_model, topics, probs = create_topic_model(model, titles_subset, embeddings)
+        save_topic_info(topic_model)
+        handle_visualizations(topic_model)
 
-    save_topic_info(topic_model)
-    handle_visualizations(topic_model)
+    except KeyboardInterrupt:
+        logging.warning("Exiting!")
 
 
 if __name__ == "__main__":

@@ -1,27 +1,30 @@
-import pandas as pd
 import nltk
+from typing import Dict, List
+
+import pandas as pd
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
-from typing import Dict, List
 
-nltk.download('punkt')
-nltk.download('punkt_tab')
-nltk.download('stopwords')
-nltk.download('wordnet')
+
+nltk_packages = ["punkt", "punkt_tab", "stopwords", "wordnet"]
+for pkg in nltk_packages:
+    try:
+        nltk.data.find(f"corpora/{pkg}")
+    except LookupError:
+        nltk.download(pkg)
+
+lemmatizer = WordNetLemmatizer()
+stop_words = set(stopwords.words("english"))
 
 
 def preprocess_text(text: str) -> str:
-    lemmatizer = WordNetLemmatizer()
-    stop_words = set(stopwords.words('italian'))
-
     tokens = word_tokenize(text.lower())
-    processed_tokens = [
-        lemmatizer.lemmatize(word) for word in tokens if word not in stop_words
-        and word.isalpha()
-    ]
-
-    return " ".join(processed_tokens)
+    return " ".join(
+        lemmatizer.lemmatize(token)
+        for token in tokens
+        if token.isalpha() and token not in stop_words
+    )
 
 
 def extract_definitions_to_word(csv_path: str) -> Dict[str, List[str]]:

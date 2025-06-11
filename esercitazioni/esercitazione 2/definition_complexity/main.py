@@ -1,12 +1,17 @@
 import os
-import questionary
 import logging
-from rich.console import Console
 from typing import Optional
+
 from dotenv import load_dotenv, find_dotenv
+from rich.console import Console
+import questionary
+
 from src.load_data import extract_definitions_to_word
-from src.similarity import compute_semantic_similarities, compute_syntactic_similarities
-from src.similarity import create_similarity_table
+from src.similarity import (
+    compute_semantic_similarities,
+    compute_syntactic_similarities,
+    create_similarity_table,
+)
 
 
 def setup_logging() -> None:
@@ -24,12 +29,22 @@ def check_dotenv(dotenv_path: Optional[str]) -> None:
         logging.error("No .env file found.")
 
 
+def load_environment() -> Optional[str]:
+    dotenv_path = find_dotenv()
+    if dotenv_path:
+        load_dotenv(dotenv_path)
+        logging.info(f"Loaded environment from: {dotenv_path}")
+        return dotenv_path
+    else:
+        logging.error("No .env file found.")
+        return None
+
+
 def main() -> None:
     setup_logging()
+    load_environment()
 
     try:
-        dotenv_path = find_dotenv()
-        check_dotenv(dotenv_path)
 
         definitions_csv = os.getenv("DEFINITIONS_CSV", "rsrc/definizioni.csv")
 

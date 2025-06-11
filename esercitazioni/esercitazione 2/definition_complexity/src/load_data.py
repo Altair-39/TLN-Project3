@@ -1,50 +1,72 @@
+import logging
+from typing import Dict, List
+
 import pandas as pd
 import nltk
-import logging
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 from deep_translator import GoogleTranslator
-from typing import Dict, List
 
-nltk.download('punkt')
-nltk.download('punkt_tab')
-nltk.download('stopwords')
-nltk.download('wordnet')
-
-
-def translate_text(text: str, target: str = 'en') -> str:
+nltk_packages = ["punkt", "punkt_tab", "stopwords", "wordnet"]
+for pkg in nltk_packages:
     try:
-        return GoogleTranslator(source='auto', target=target).translate(text)
+        nltk.data.find(f"corpora/{pkg}")
+    except LookupError:
+        nltk.download(pkg)
+
+lemmatizer = WordNetLemmatizer()
+stop_words = set(stopwords.words("english"))
+
+
+def translate_texts(texts: List[str], target: str = "en") -> List[str]:
+    try:
+        return GoogleTranslator(source="auto", target=target).translate_batch(texts)
     except Exception as e:
-        logging.warning(f"Translation failed for text: {text}. Error: {e}")
-        return text
+        logging.warning(f"Batch translation failed: {e}")
+        return texts
 
 
 def preprocess_text(text: str) -> str:
-    lemmatizer = WordNetLemmatizer()
-    stop_words = set(stopwords.words('english'))
-
     tokens = word_tokenize(text.lower())
-    processed_tokens = [
-        lemmatizer.lemmatize(word) for word in tokens if word not in stop_words
-        and word.isalpha()
-    ]
-
-    return " ".join(processed_tokens)
+    return " ".join(
+        lemmatizer.lemmatize(token)
+        for token in tokens
+        if token.isalpha() and token not in stop_words
+    )
 
 
 def extract_definitions_to_word(csv_path: str) -> Dict[str, List[str]]:
-    df = pd.read_csv(csv_path)
+    try:
+        df = pd.read_csv(csv_path)
+    except Exception as e:
+        logging.error(f"Failed to load CSV file at '{csv_path}': {e}")
+        return {}
+
+    if "Termine" not in df.columns:
+        logging.error("Missing 'Termine' column in CSV.")
+        return {}
+
     definitions_dict = {}
 
-    for index, row in df.iterrows():
-        term = row['Termine']
-        definitions = row[2:].dropna().tolist()
+    for _, row in df.iterrows():
+        term = str(row.get("Termine", "")).strip()
+        if not term:
+            continue
 
-        translated_definitions = [translate_text(defn) for defn in definitions]
-        processed_definitions = [preprocess_text(
-            defn) for defn in translated_definitions]
-        definitions_dict[term] = processed_definitions
+        raw_definitions = [
+            str(cell).strip()
+            for cell in row[2:].dropna().tolist()
+            if str(cell).strip()
+        ]
+
+        if not raw_definitions:
+            logging.info(f"No definitions found for term '{term}'")
+            continue
+
+        translated_defs = translate_texts(raw_definitions)
+        processed_defs = [preprocess_text(d) for d in translated_defs]
+
+        definitions_dict[term] = processed_defs
 
     return definitions_dict

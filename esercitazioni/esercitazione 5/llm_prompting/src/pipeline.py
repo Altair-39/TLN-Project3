@@ -18,7 +18,7 @@ def load_pipeline() -> Pipeline:
         model=model,
         tokenizer=tokenizer,
         max_new_tokens=50,
-        temperature=0.7,
+        temperature=0.4,
         top_p=0.95,
         do_sample=True
     )
