@@ -7,10 +7,10 @@ def get_sense(
     lemma: str,
     targetLang: List[str],
     key: str,
-    searchLang: str = "EN",
     source: str = "WIKI"
 ) -> Optional[List[Dict[str, Any]]]:
     url = 'https://babelnet.io/v9/getSenses'
+    searchLang = targetLang[0]
     params = {
         'lemma': lemma,
         'searchLang': searchLang,
@@ -47,7 +47,6 @@ def find_synset_language_dict(
         if synset_id and lang in lang_synsets:
             lang_synsets[lang].add(synset_id)
 
-    # Compute intersection of synsets across all languages (only if all have synsets)
     synset_sets = [s for s in lang_synsets.values() if s]
     if synset_sets:
         common_synsets = set.intersection(*synset_sets)
