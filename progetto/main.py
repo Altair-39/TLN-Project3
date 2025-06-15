@@ -94,13 +94,15 @@ def process_word_tuple(words: Tuple[str, ...], langs: List[str], api_key: str
 
     common_synsets = set.intersection(*synsets_sets) if synsets_sets else set()
 
+    common_len = len(common_synsets)
+    langs_len = len(langs)
     total_synsets_count = sum(len(s) for s in synsets_sets)
+
     if total_synsets_count == 0:
         ambiguity_reduction = 0.0
     else:
-        ambiguity_reduction = 1 - (len(common_synsets) * len(langs)
-                                   ) / total_synsets_count
-
+        ambiguity_reduction = (total_synsets_count - (common_len * langs_len)
+                               ) / total_synsets_count
     pseudoword = '-'.join(words)
     save_pseudoword_multi(pseudoword, words, synsets, common_synsets, langs)
 

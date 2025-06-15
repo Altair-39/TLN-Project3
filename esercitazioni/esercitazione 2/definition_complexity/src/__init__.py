@@ -1,4 +1,4 @@
 from src.load_data import extract_definitions_to_word
 from src.similarity import compute_semantic_similarities
-from src.similarity import compute_syntactic_similarities
+from src.similarity import compute_semantic_similarities
 from src.similarity import create_similarity_table

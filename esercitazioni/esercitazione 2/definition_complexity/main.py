@@ -9,7 +9,7 @@ import questionary
 from src.load_data import extract_definitions_to_word
 from src.similarity import (
     compute_semantic_similarities,
-    compute_syntactic_similarities,
+    compute_lexical_similarities,
     create_similarity_table,
 )
 
@@ -52,7 +52,7 @@ def main() -> None:
         definitions = extract_definitions_to_word(definitions_csv)
 
         semantic_results = compute_semantic_similarities(definitions)
-        syntactic_results = compute_syntactic_similarities(definitions)
+        lexical_results = compute_lexical_similarities(definitions)
 
         if not definitions:
             logging.warning("No definitions found.")
@@ -69,7 +69,7 @@ def main() -> None:
 
         table, avg_sem, avg_syn = create_similarity_table(selected_term,
                                                           semantic_results,
-                                                          syntactic_results)
+                                                          lexical_results)
         console.print(table)
 
     except KeyboardInterrupt:

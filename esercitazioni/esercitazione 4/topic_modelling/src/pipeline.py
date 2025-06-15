@@ -4,6 +4,7 @@ import numpy as np
 from bertopic import BERTopic
 from datasets import load_dataset
 from sentence_transformers import SentenceTransformer
+from sklearn.feature_extraction.text import CountVectorizer
 
 
 def dataset() -> Tuple[List[str], List[str]]:
@@ -22,6 +23,14 @@ def create_topic_model(
     texts: List[str],
     embeddings: np.ndarray
 ) -> Tuple[BERTopic, List[int], List[Optional[float]]]:
-    topic_model = BERTopic(embedding_model=model, min_topic_size=10, verbose=True)
+    vectorizer_model = CountVectorizer(stop_words="english")
+
+    topic_model = BERTopic(
+        embedding_model=model,
+        vectorizer_model=vectorizer_model,
+        min_topic_size=10,
+        verbose=True
+    )
+
     topics, probs = topic_model.fit_transform(texts, embeddings)
     return topic_model, topics, probs

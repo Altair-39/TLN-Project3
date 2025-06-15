@@ -1,16 +1,12 @@
+from typing import Dict, Tuple, List
 from itertools import combinations
 from statistics import mean
-from difflib import SequenceMatcher
-from typing import Dict, List, Tuple
 from concurrent.futures import ProcessPoolExecutor
 
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from rich.table import Table
 from rich.box import HEAVY
-
-model = SentenceTransformer('all-MiniLM-L6-v2')
-
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
@@ -29,14 +25,24 @@ def compute_semantic_for_term(term_defs: Tuple[str, List[str]]
     return term, results
 
 
-def compute_syntactic_for_term(term_defs: Tuple[str, List[str]]
+def lexical_similarity(str1: str, str2: str) -> float:
+    words1 = set(str1.lower().split())
+    words2 = set(str2.lower().split())
+    intersection = words1.intersection(words2)
+    union = words1.union(words2)
+    if not union:
+        return 0.0
+    return len(intersection) / len(union)
+
+
+def compute_lexical_for_term(term_defs: Tuple[str, List[str]]
                                ) -> Tuple[str, List[Tuple[str, str, float]]]:
     term, defs = term_defs
     if len(defs) < 2:
         return term, []
 
     results = [
-        (def1, def2, SequenceMatcher(None, def1, def2).ratio())
+        (def1, def2, lexical_similarity(def1, def2))
         for def1, def2 in combinations(defs, 2)
     ]
     return term, results
@@ -51,19 +57,19 @@ def compute_semantic_similarities(
     return dict(results)
 
 
-def compute_syntactic_similarities(
+def compute_lexical_similarities(
     definitions_dict: Dict[str, List[str]],
     max_workers: int = 4
 ) -> Dict[str, List[Tuple[str, str, float]]]:
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
-        results = executor.map(compute_syntactic_for_term, definitions_dict.items())
+        results = executor.map(compute_lexical_for_term, definitions_dict.items())
     return dict(results)
 
 
 def create_similarity_table(
     term: str,
     semantic_results: Dict[str, List[Tuple[str, str, float]]],
-    syntactic_results: Dict[str, List[Tuple[str, str, float]]]
+    lexical_results: Dict[str, List[Tuple[str, str, float]]]
 ) -> Tuple[Table, float, float]:
     sem_scores = []
     syn_scores = []
@@ -81,7 +87,7 @@ def create_similarity_table(
 
     for (def1, def2, sem_score), (_, _, syn_score) in zip(
         semantic_results[term],
-        syntactic_results[term]
+        lexical_results[term]
     ):
         sem_scores.append(sem_score)
         syn_scores.append(syn_score)

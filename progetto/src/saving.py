@@ -24,17 +24,36 @@ def save_pseudoword(
     common_synsets: Set[str]
 ) -> None:
     filename = f'rsrc/pseudowords_{en_word}_{it_word}.csv'
+
+    # Extract all synsets for each language
+    en_synsets = {s['properties']['synsetID']['id'] for s in synsets
+                  if s['properties']['language'].upper() == 'EN'}
+    it_synsets = {s['properties']['synsetID']['id'] for s in synsets
+                  if s['properties']['language'].upper() == 'IT'}
+
     with open(filename, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
-        writer.writerow(['pseudoword', 'en_word', 'it_word',
-                        'en_sense', 'it_sense', 'common_synset_id'])
+        writer.writerow(['pseudoword', 'language', 'word',
+                        'sense', 'synset_id', 'is_common'])
 
+        # Save English-exclusive senses
+        for synset_id in en_synsets - common_synsets:
+            sense = extract_lemma_for_lang(synsets, synset_id, 'EN')
+            writer.writerow([f"{en_word}-{it_word}", 'EN', en_word,
+                             sense, synset_id, False])
+
+        # Save Italian-exclusive senses
+        for synset_id in it_synsets - common_synsets:
+            sense = extract_lemma_for_lang(synsets, synset_id, 'IT')
+            writer.writerow([f"{en_word}-{it_word}", 'IT', it_word,
+                             sense, synset_id, False])
+
+        # Save common senses
         for synset_id in common_synsets:
             en_sense = extract_lemma_for_lang(synsets, synset_id, 'EN')
             it_sense = extract_lemma_for_lang(synsets, synset_id, 'IT')
-            pseudoword = f"{en_word}-{it_word}"
-            writer.writerow([pseudoword, en_word, it_word,
-                            en_sense, it_sense, synset_id])
+            writer.writerow([f"{en_word}-{it_word}", 'BOTH', f"{en_word}/{it_word}",
+                             f"{en_sense}/{it_sense}", synset_id, True])
 
 
 def save_ambiguities(

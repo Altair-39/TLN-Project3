@@ -32,11 +32,6 @@ def find_synset_language_dict(
     synsets: List[Dict[str, Any]],
     langs: List[str]
 ) -> Tuple[Dict[str, Set[str]], Set[str]]:
-    """
-    For a list of synsets, returns:
-    - A dict mapping each language to its set of synset IDs
-    - The set of synsets common to all languages
-    """
     lang_synsets: Dict[str, Set[str]] = {lang.upper(): set() for lang in langs}
 
     for synset in synsets:
