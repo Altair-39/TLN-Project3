@@ -1,0 +1,16 @@
+[project]
+name = "esercitazioni"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = []
+
+[tool.uv.workspace]
+members = [
+    "esercitazione 1/wordnet_conceptnet_mapping",
+    "esercitazione 2/definition_complexity",
+    "esercitazione 3/content_to_form",
+    "esercitazione 4/topic_modelling",
+    "esercitazione 5/llm_prompting",
+]

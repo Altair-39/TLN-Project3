@@ -1,0 +1,14 @@
+[project]
+name = "definition-complexity"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "deep-translator>=1.11.4",
+    "dotenv>=0.9.9",
+    "pandas>=2.3.0",
+    "questionary>=2.1.0",
+    "rich>=14.0.0",
+    "sentence-transformers>=4.1.0",
+]

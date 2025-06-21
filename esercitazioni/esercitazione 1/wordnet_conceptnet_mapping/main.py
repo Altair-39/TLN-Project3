@@ -1,8 +1,16 @@
 import json
 import random
 import logging
+import nltk
 from nltk.corpus import wordnet as wn
 from src.wordnet_utils import wordnet_to_conceptnet
+
+nltk_packages = ["wordnet"]
+for pkg in nltk_packages:
+    try:
+        nltk.data.find(f"corpora/{pkg}")
+    except LookupError:
+        nltk.download(pkg)
 
 
 def setup_logging() -> None:

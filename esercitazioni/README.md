@@ -2,7 +2,9 @@
 
 ## Istruzioni per l'esecuzione dei programmi 
 
-Per le esercitazioni:
+### Con pip
+
+Per ogni esercitazione:
 
 - Creare un ambiente virtuale e attivarlo
 
@@ -19,6 +21,16 @@ source venv/bin/activate
 ```bash
 
 pip install -r requirements.txt
+
+```
+
+### Con uv
+
+Per ogni esercitazione:
+
+```bash
+
+uv run main.py
 
 ```
 
